@@ -43,4 +43,44 @@ void ASandboxCharacter_Mover::DetectInteractableDoor(bool& IsHit, FHitResult& Ou
 	IsHit = UKismetSystemLibrary::SphereTraceSingle(this, Start, End, 20, TraceTypeQuery1, false, TArray<AActor*>(), EDrawDebugTrace::ForOneFrame, OutHit, true);
 }
 
+void ASandboxCharacter_Mover::MoveTo_Implementation(FVector TargetLoc, FRotator TargetRot)
+{
+	IKinematic::MoveTo_Implementation(TargetLoc, TargetRot);
+
+	// 构造 LatentActionInfo
+	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = this; 
+	LatentInfo.ExecutionFunction = FName("OnMoveCompleted"); 
+	LatentInfo.Linkage = 0; 
+	LatentInfo.UUID = 100;
+	
+	//移动
+	UKismetSystemLibrary::MoveComponentTo(
+		GetRootComponent(), 
+		TargetLoc, 
+		TargetRot, 
+		true,              // bEaseOut
+		true,              // bEaseIn
+		0.5f,               // OverTime
+		false,              // bForceShortestRotationPath
+		EMoveComponentAction::Move, 
+		LatentInfo
+	);
+	
+}
+
+void ASandboxCharacter_Mover::ShouldUseControllerRotaion_Implementation(bool ShouldUse)
+{
+	IKinematic::ShouldUseControllerRotaion_Implementation(ShouldUse);
+
+	bUseControllerRotationYaw = ShouldUse;
+}
+
+void ASandboxCharacter_Mover::SetPlayerControllerRotation_Implementation(FRotator TargetRot)
+{
+	IKinematic::SetPlayerControllerRotation_Implementation(TargetRot);
+
+	GetController()->SetControlRotation(TargetRot);
+}
+
 

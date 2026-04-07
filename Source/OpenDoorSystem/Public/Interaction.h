@@ -18,9 +18,13 @@ public:
 
 	//发出交互请求
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent , Category="Interaction")
-	void Interact(bool& IsValid, APawn* Player);
+	void Interact(bool& IsValid, AActor* Player);
 
 	//交互逻辑
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent , Category="Interaction")
+	UFUNCTION(BlueprintNativeEvent)
 	void OnInteract();
+
+	//交互完成事件
+	UFUNCTION(BlueprintNativeEvent)
+	void OnInteractOver();
 };
